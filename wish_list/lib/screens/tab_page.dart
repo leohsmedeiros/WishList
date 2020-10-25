@@ -3,11 +3,17 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:wishlist/screens/tab_content_form.dart';
 
-class TabPage extends StatelessWidget {
+class TabPage extends StatefulWidget {
   CameraDescription camera;
 
   TabPage({ @required this.camera });
 
+  @override
+  _TabPageState createState() => _TabPageState();
+}
+
+class _TabPageState extends State<TabPage> {
+  int _selectedIndex = 0;
   PageController _pageController = PageController(initialPage: 0);
 
   @override
@@ -23,11 +29,32 @@ class TabPage extends StatelessWidget {
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              FlatButton(child: Text("Não assistidos"), onPressed: () => _pageController.jumpToPage(0),),
+              FlatButton(
+                child: Text("Não assistidos",
+                  style: TextStyle(
+                    decoration: _selectedIndex == 0 ? TextDecoration.underline : TextDecoration.none,
+                    color: _selectedIndex == 0 ? Colors.blue : Colors.black,
+                  ),
+                ),
+                onPressed: () => _onItemTabTapped(0),),
               Container(color: Colors.blueGrey, width: 0.5, height: 30,),
-              FlatButton(child: Text("Assistidos"), onPressed: () => _pageController.jumpToPage(1),),
+              FlatButton(
+                child: Text("Assistidos",
+                  style: TextStyle(
+                    decoration: _selectedIndex == 1 ? TextDecoration.underline : TextDecoration.none,
+                    color: _selectedIndex == 1 ? Colors.blue : Colors.black,
+                  ),
+                ),
+                onPressed: () => _onItemTabTapped(1),),
               Container(color: Colors.blueGrey, width: 0.5, height: 30,),
-              FlatButton(child: Text("Cadastrar"), onPressed: () => _pageController.jumpToPage(2),),
+              FlatButton(
+                child: Text("Cadastrar",
+                  style: TextStyle(
+                    decoration: _selectedIndex == 2 ? TextDecoration.underline : TextDecoration.none,
+                    color: _selectedIndex == 2 ? Colors.blue : Colors.black,
+                  )
+                ),
+                onPressed: () => _onItemTabTapped(2),),
               Container(color: Colors.blueGrey, width: 0.5, height: 30,),
             ],
           ),
@@ -35,6 +62,13 @@ class TabPage extends StatelessWidget {
       ),
       body: _body(context),
     );
+  }
+
+  void _onItemTabTapped(int index) {
+    setState(() {
+      _selectedIndex = index;
+    });
+    _pageController.jumpToPage(index);
   }
 
   _body(BuildContext context) {
@@ -53,7 +87,7 @@ class TabPage extends StatelessWidget {
               child: Text('Listados'),
             ),
           ),
-          TabContentForm(camera: camera,),
+          TabContentForm(camera: widget.camera,),
         ],
       ),
     );
