@@ -4,6 +4,8 @@ import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:wishlist/database/movie.dart';
+import 'package:wishlist/database/movie_dao.dart';
 
 class TabContentForm extends StatefulWidget {
   CameraDescription camera;
@@ -19,7 +21,7 @@ class _TabContentFormState extends State<TabContentForm> {
   String _imagePath;
   File _image;
 
-  bool _status = false;
+  int _status = 0;
 
   List dropDownItems = [
     "Assistido",
@@ -80,20 +82,7 @@ class _TabContentFormState extends State<TabContentForm> {
             width: double.infinity,
             child: ElevatedButton(
               child: Text("salvar"),
-              onPressed: () {
-                print("name: $_name");
-                print("author: $_author");
-                print("year: $_year");
-                print("status: $_status");
-                print("imagePath: $_imagePath");
-
-                if (_formKey.currentState.validate()) {
-
-                  Scaffold
-                      .of(context)
-                      .showSnackBar(SnackBar(content: Text('Processing Data')));
-                }
-              }
+              onPressed: _save
             ),
           )
         ],
@@ -101,31 +90,68 @@ class _TabContentFormState extends State<TabContentForm> {
     );
   }
 
+  _save() async {
+    print("name: $_name");
+    print("author: $_author");
+    print("year: $_year");
+    print("status: $_status");
+    print("imagePath: $_imagePath");
+
+    if (_formKey.currentState.validate()) {
+      Movie _movie = Movie(
+          name: _name,
+          photo: _imagePath,
+          author: _author,
+          status: _status,
+          year: int.parse(_year)
+      );
+
+      Scaffold
+          .of(context)
+          .showSnackBar(SnackBar(content: Text('Salvando dados')));
+
+      var movieDao = MovieDAO();
+
+      await movieDao.save(_movie);
+
+      Scaffold
+          .of(context)
+          .showSnackBar(SnackBar(content: Text('Salvo com sucesso')));
+
+//      Scaffold
+//          .of(context)
+//          .showSnackBar(SnackBar(content: Text('Processing Data')));
+    }
+  }
+
   _radioButtons() {
     return Row(
       mainAxisAlignment: MainAxisAlignment.start,
       children: <Widget>[
         Radio(
-          value: _status ? 1 : 0,
+          value: _status == 0 ? 0 : 1,
           groupValue: 0,
           onChanged: (value) {
-            print("value radio 0: $value");
-
             setState(() {
-              _status = false;
+              _status = 0;
             });
+
+            print("value radio 0: $value");
+            print("status: $_status");
+
           },
         ),
         new Text('Não assistido',),
         Radio(
-          value: _status ? 0 : 1,
+          value: _status == 1 ? 0 : 1,
           groupValue: 0,
           onChanged: (value) {
-            print("value radio 1: $value");
-
             setState(() {
-              _status = true;
+              _status = 1;
             });
+
+            print("value radio 1: $value");
+            print("status: $_status");
           },
         ),
         new Text('Assistido',),
@@ -164,6 +190,7 @@ class _TabContentFormState extends State<TabContentForm> {
     );
 
     setState(() {
+      _imagePath = image.path;
       _image = image;
     });
   }
@@ -174,6 +201,7 @@ class _TabContentFormState extends State<TabContentForm> {
     );
 
     setState(() {
+      _imagePath = image.path;
       _image = image;
     });
   }
