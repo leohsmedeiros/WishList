@@ -216,14 +216,14 @@ class _TabContentFormState extends State<TabContentForm> {
                 children: <Widget>[
                   new ListTile(
                       leading: new Icon(Icons.photo_library),
-                      title: new Text('Photo Library'),
+                      title: new Text('Galeria'),
                       onTap: () {
                         _imgFromGallery();
                         Navigator.of(context).pop();
                       }),
                   new ListTile(
                     leading: new Icon(Icons.photo_camera),
-                    title: new Text('Camera'),
+                    title: new Text('Câmera'),
                     onTap: () {
                       _imgFromCamera();
                       Navigator.of(context).pop();
