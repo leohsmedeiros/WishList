@@ -1,3 +1,5 @@
+import 'dart:core';
+
 import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +8,7 @@ import 'package:wishlist/screens/tab_content_form.dart';
 class TabPage extends StatefulWidget {
   CameraDescription camera;
 
-  TabPage({ @required this.camera });
+  TabPage({@required this.camera});
 
   @override
   _TabPageState createState() => _TabPageState();
@@ -21,41 +23,17 @@ class _TabPageState extends State<TabPage> {
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       appBar: AppBar(
+        title: Text(_getItemTabTitleByIndex(_selectedIndex),),
         backgroundColor: Colors.white,
       ),
       bottomNavigationBar: BottomAppBar(
         child: Container(
-          height: 60,
           child: Row(
             mainAxisAlignment: MainAxisAlignment.spaceEvenly,
             children: <Widget>[
-              FlatButton(
-                child: Text("Não assistidos",
-                  style: TextStyle(
-                    decoration: _selectedIndex == 0 ? TextDecoration.underline : TextDecoration.none,
-                    color: _selectedIndex == 0 ? Colors.blue : Colors.black,
-                  ),
-                ),
-                onPressed: () => _onItemTabTapped(0),),
-              Container(color: Colors.blueGrey, width: 0.5, height: 30,),
-              FlatButton(
-                child: Text("Assistidos",
-                  style: TextStyle(
-                    decoration: _selectedIndex == 1 ? TextDecoration.underline : TextDecoration.none,
-                    color: _selectedIndex == 1 ? Colors.blue : Colors.black,
-                  ),
-                ),
-                onPressed: () => _onItemTabTapped(1),),
-              Container(color: Colors.blueGrey, width: 0.5, height: 30,),
-              FlatButton(
-                child: Text("Cadastrar",
-                  style: TextStyle(
-                    decoration: _selectedIndex == 2 ? TextDecoration.underline : TextDecoration.none,
-                    color: _selectedIndex == 2 ? Colors.blue : Colors.black,
-                  )
-                ),
-                onPressed: () => _onItemTabTapped(2),),
-              Container(color: Colors.blueGrey, width: 0.5, height: 30,),
+              _tabTitleItem(0),
+              _tabTitleItem(1),
+              _tabTitleItem(2),
             ],
           ),
         ),
@@ -64,7 +42,32 @@ class _TabPageState extends State<TabPage> {
     );
   }
 
-  void _onItemTabTapped(int index) {
+  _getItemTabTitleByIndex(int index) {
+    if (index == 0) {
+      return "Não assistidos";
+    } else if (index == 1) {
+      return "Assistidos";
+    } else {
+      return "Cadastrar";
+    }
+  }
+
+  _tabTitleItem(int index) {
+    return FlatButton(
+      child: Text(
+        _getItemTabTitleByIndex(index),
+        style: TextStyle(
+          decoration: _selectedIndex == index
+              ? TextDecoration.underline
+              : TextDecoration.none,
+          color: _selectedIndex == index ? Colors.blue : Colors.black,
+        ),
+      ),
+      onPressed: () => _onItemTabTapped(index),
+    );
+  }
+
+  _onItemTabTapped(int index) {
     setState(() {
       _selectedIndex = index;
     });
@@ -87,7 +90,9 @@ class _TabPageState extends State<TabPage> {
               child: Text('Listados'),
             ),
           ),
-          TabContentForm(camera: widget.camera,),
+          TabContentForm(
+            camera: widget.camera,
+          ),
         ],
       ),
     );
