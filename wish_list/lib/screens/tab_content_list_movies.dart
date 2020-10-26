@@ -7,8 +7,11 @@ import 'package:wishlist/model/movie.dart';
 
 class TabContentListMovies extends StatefulWidget {
   int status;
+  MovieDAO _movieDAO;
 
-  TabContentListMovies({ @required this.status });
+  TabContentListMovies({ @required this.status }) {
+    this._movieDAO = MovieDAO();
+  }
 
   @override
   _TabContentListMoviesState createState() => _TabContentListMoviesState();
@@ -17,11 +20,10 @@ class TabContentListMovies extends StatefulWidget {
 class _TabContentListMoviesState extends State<TabContentListMovies> {
   @override
   Widget build(BuildContext context) {
-    var moviesDao = MovieDAO();
     print ("widget.status: ${widget.status}");
 
     return FutureBuilder(
-      future: moviesDao.findAllByStatus(widget.status),
+      future: widget._movieDAO.findAllByStatus(widget.status),
       builder: (BuildContext context, AsyncSnapshot<List<Movie>> snapshot) {
         print ("after snapshot: widget.status: ${widget.status}");
 
@@ -29,30 +31,7 @@ class _TabContentListMoviesState extends State<TabContentListMovies> {
           List<Widget> cards = snapshot.data.map((data) {
             return Container(
               height: 100,
-              child: Card(
-                child: Padding(
-                  padding: const EdgeInsets.all(10.0),
-                  child: Row(
-                    mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                    children: <Widget>[
-                      Image.file(File(data.photo), fit: BoxFit.fitWidth,),
-                      Column(
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        mainAxisAlignment: MainAxisAlignment.spaceAround,
-                        children: <Widget>[
-                          Text(data.name, style: TextStyle(fontWeight: FontWeight.bold),),
-                          Text(data.status == 1 ? "Assistido" : "Não Assistido"),
-                        ],
-                      ),
-                      PopupMenuButton(
-                          onSelected: (choice) => _choiceAction(choice, data, moviesDao),
-                          itemBuilder: (BuildContext context) =>
-                          ["edit", "delete"].map((e) => PopupMenuItem<String>(value: e, child: Text(e),)).toList()
-                      ),
-                    ],
-                  ),
-                ),
-              ),
+              child: _card(data),
             );
           }).toList();
 
@@ -70,22 +49,49 @@ class _TabContentListMoviesState extends State<TabContentListMovies> {
     );
   }
 
-  void _choiceAction(String choice, Movie movie, MovieDAO moviesDAO) {
+  _card(Movie movie) {
+    return Card(
+      child: Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: <Widget>[
+            Image.file(File(movie.photo), fit: BoxFit.fitWidth,),
+            _movieInfo(movie),
+            _popupMenu(movie),
+          ],
+        ),
+      ),
+    );
+  }
+
+  _movieInfo(Movie movie) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      mainAxisAlignment: MainAxisAlignment.spaceAround,
+      children: <Widget>[
+        Text(movie.name, style: TextStyle(fontWeight: FontWeight.bold),),
+        Text(movie.status == 1 ? "Assistido" : "Não Assistido"),
+      ],
+    );
+  }
+
+  _popupMenu(Movie movie) {
+    return PopupMenuButton(
+        onSelected: (choice) => _choiceAction(choice, movie),
+        itemBuilder: (BuildContext context) =>
+            ["edit", "delete"].map((e) => PopupMenuItem<String>(value: e, child: Text(e),)).toList()
+    );
+  }
+
+  void _choiceAction(String choice, Movie movie) {
     if(choice == "delete") {
-      moviesDAO
+      widget
+          ._movieDAO
           .delete(movie.id)
           .then((value) => setState(() {}));
+    } else {
+
     }
-
-
-//    if(choice == "edit"){
-//      print('Choice: $choice');
-//    }
-//    else if(choice == "delete"){
-//      print('Subscribe');
-//    }
-//    else if(choice == Constants.SignOut){
-//      print('SignOut');
-//    }
   }
 }
