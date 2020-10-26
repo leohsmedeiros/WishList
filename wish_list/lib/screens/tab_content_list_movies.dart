@@ -1,15 +1,18 @@
 import 'dart:io';
 
+import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:wishlist/database/movie_dao.dart';
 import 'package:wishlist/model/movie.dart';
+import 'package:wishlist/screens/tab_content_form.dart';
 
 class TabContentListMovies extends StatefulWidget {
   int status;
+  CameraDescription camera;
   MovieDAO _movieDAO;
 
-  TabContentListMovies({ @required this.status }) {
+  TabContentListMovies({ @required this.status, @required this.camera }) {
     this._movieDAO = MovieDAO();
   }
 
@@ -20,18 +23,14 @@ class TabContentListMovies extends StatefulWidget {
 class _TabContentListMoviesState extends State<TabContentListMovies> {
   @override
   Widget build(BuildContext context) {
-    print ("widget.status: ${widget.status}");
-
     return FutureBuilder(
       future: widget._movieDAO.findAllByStatus(widget.status),
-      builder: (BuildContext context, AsyncSnapshot<List<Movie>> snapshot) {
-        print ("after snapshot: widget.status: ${widget.status}");
-
+      builder: (BuildContext context2, AsyncSnapshot<List<Movie>> snapshot) {
         if (snapshot.hasData && snapshot.data.length > 0) {
           List<Widget> cards = snapshot.data.map((data) {
             return Container(
               height: 100,
-              child: _card(data),
+              child: _card(data, context),
             );
           }).toList();
 
@@ -49,16 +48,26 @@ class _TabContentListMoviesState extends State<TabContentListMovies> {
     );
   }
 
-  _card(Movie movie) {
+
+  _loadImage(Movie movie) {
+    if (File(movie.photo).existsSync()) {
+      return Image.file(File(movie.photo), fit: BoxFit.fitWidth,);
+    } else {
+      return Image.asset("assets/images/default_image.jpg", fit: BoxFit.fitWidth,);
+    }
+  }
+
+
+  _card(Movie movie, BuildContext context) {
     return Card(
       child: Padding(
         padding: const EdgeInsets.all(10.0),
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceBetween,
           children: <Widget>[
-            Image.file(File(movie.photo), fit: BoxFit.fitWidth,),
+            _loadImage(movie),
             _movieInfo(movie),
-            _popupMenu(movie),
+            _popupMenu(movie, context),
           ],
         ),
       ),
@@ -76,21 +85,30 @@ class _TabContentListMoviesState extends State<TabContentListMovies> {
     );
   }
 
-  _popupMenu(Movie movie) {
+  _popupMenu(Movie movie, BuildContext context) {
     return PopupMenuButton(
-        onSelected: (choice) => _choiceAction(choice, movie),
+        onSelected: (choice) => _choiceAction(choice, movie, context),
         itemBuilder: (BuildContext context) =>
             ["edit", "delete"].map((e) => PopupMenuItem<String>(value: e, child: Text(e),)).toList()
     );
   }
 
-  void _choiceAction(String choice, Movie movie) {
+  void _choiceAction(String choice, Movie movie, BuildContext context) {
     if(choice == "delete") {
       widget
           ._movieDAO
           .delete(movie.id)
           .then((value) => setState(() {}));
     } else {
+      Navigator.push(context,
+          MaterialPageRoute(
+              builder: (BuildContext context) =>
+                  Scaffold(
+                    appBar: AppBar(title: Text("Edição de filme"),),
+                    body: TabContentForm(camera: widget.camera, movie: movie,)
+                  )
+          )
+      ).then((value) => setState(() {}));
 
     }
   }

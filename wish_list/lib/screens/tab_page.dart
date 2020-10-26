@@ -3,7 +3,6 @@ import 'dart:core';
 import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:wishlist/database/movie_dao.dart';
 import 'package:wishlist/screens/tab_content_form.dart';
 import 'package:wishlist/screens/tab_content_list_movies.dart';
 
@@ -25,7 +24,7 @@ class _TabPageState extends State<TabPage> {
     return Scaffold(
       resizeToAvoidBottomPadding: false,
       appBar: AppBar(
-        title: Text(_getItemTabTitleByIndex(_selectedIndex),),
+        title: Text(_getItemTabTitleByIndex(_selectedIndex), style: TextStyle(color: Colors.black),),
         backgroundColor: Colors.white,
       ),
       bottomNavigationBar: BottomAppBar(
@@ -82,18 +81,8 @@ class _TabPageState extends State<TabPage> {
       padding: EdgeInsets.all(10.0),
       child: PageView(
         controller: _pageController,
+        physics: NeverScrollableScrollPhysics(),
         children: <Widget>[
-//          Center(
-//            child: Container(
-//              child: Text('Não Listados'),
-//            ),
-//          ),
-//          TabContentListMovies(status: 0,),
-//          Center(
-//            child: Container(
-//              child: Text('Listados'),
-//            ),
-//          ),
           TabContentListMovies(status: 0,),
           TabContentListMovies(status: 1,),
           TabContentForm(
