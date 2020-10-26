@@ -4,7 +4,7 @@ import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
-import 'package:wishlist/database/movie.dart';
+import 'package:wishlist/model/movie.dart';
 import 'package:wishlist/database/movie_dao.dart';
 
 class TabContentForm extends StatefulWidget {
@@ -46,9 +46,6 @@ class _TabContentFormState extends State<TabContentForm> {
           ),
           SizedBox(height: 50.0,),
 
-//            Center(
-//                child: Image.network("https://www.washingtonpost.com/wp-apps/imrs.php?src=https://arc-anglerfish-washpost-prod-washpost.s3.amazonaws.com/public/HB4AT3D3IMI6TMPTWIZ74WAR54.jpg&w=80"),
-//            ),
           Center(child: _buttonToLoadImage(context),),
           SizedBox(height: 10.0,),
 
@@ -117,10 +114,6 @@ class _TabContentFormState extends State<TabContentForm> {
       Scaffold
           .of(context)
           .showSnackBar(SnackBar(content: Text('Salvo com sucesso')));
-
-//      Scaffold
-//          .of(context)
-//          .showSnackBar(SnackBar(content: Text('Processing Data')));
     }
   }
 

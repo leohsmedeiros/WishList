@@ -3,7 +3,9 @@ import 'dart:core';
 import 'package:camera/camera.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:wishlist/database/movie_dao.dart';
 import 'package:wishlist/screens/tab_content_form.dart';
+import 'package:wishlist/screens/tab_content_list_movies.dart';
 
 class TabPage extends StatefulWidget {
   CameraDescription camera;
@@ -75,21 +77,25 @@ class _TabPageState extends State<TabPage> {
   }
 
   _body(BuildContext context) {
+
     return Padding(
       padding: EdgeInsets.all(10.0),
       child: PageView(
         controller: _pageController,
         children: <Widget>[
-          Center(
-            child: Container(
-              child: Text('Não Listados'),
-            ),
-          ),
-          Center(
-            child: Container(
-              child: Text('Listados'),
-            ),
-          ),
+//          Center(
+//            child: Container(
+//              child: Text('Não Listados'),
+//            ),
+//          ),
+//          TabContentListMovies(status: 0,),
+//          Center(
+//            child: Container(
+//              child: Text('Listados'),
+//            ),
+//          ),
+          TabContentListMovies(status: 0,),
+          TabContentListMovies(status: 1,),
           TabContentForm(
             camera: widget.camera,
           ),

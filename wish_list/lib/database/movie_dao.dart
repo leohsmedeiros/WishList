@@ -3,7 +3,7 @@ import 'dart:async';
 import 'package:sqflite/sqflite.dart';
 
 import 'db_helper.dart';
-import 'movie.dart';
+import '../model/movie.dart';
 
 // Data Access Object
 class MovieDAO {
@@ -26,10 +26,10 @@ class MovieDAO {
     return list.map<Movie>((json) => Movie.fromJson(json)).toList();
   }
 
-  Future<List<Movie>> findAllByStatus(String status) async {
+  Future<List<Movie>> findAllByStatus(int status) async {
     final dbClient = await db;
 
-    final list = await dbClient.rawQuery('select * from movies where status =? ',[status]);
+    final list = await dbClient.rawQuery('select * from movies where status = ?',[status]);
 
     return list.map<Movie>((json) => Movie.fromJson(json)).toList();
   }
