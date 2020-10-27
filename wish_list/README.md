@@ -1,6 +1,6 @@
-# Wish List Project - Soluti
+# Wish List Project
 
-> Wish List Project é um projeto feito para processo seletivo na Soluti. Ele é um projeto para gerenciar uma lista de filmes, para marcar os que já assistiu e cadastrar os que quer assistir.
+> É um projeto para gerenciar uma lista de filmes, para marcar os que já assistiu e cadastrar os que quer assistir.
 
 ## Installation
 
